@@ -20,7 +20,7 @@ exports.createBookValidator = (req, res, next) => {
 };
 
 exports.userSignupValidator = (req, res, next) => {
-    console.log("HOLA");
+    console.log(req.body);
     // name is not null and between 4-10 characters
     req.check('name', 'Name is required').notEmpty();
     // email is not null, valid and normalized
