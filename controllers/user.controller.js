@@ -20,7 +20,7 @@ exports.userById = (req, res, next, id) => {
 };
 
 exports.findUsers = (req, res) => {
-    console.log("HOLA");
+    console.log("HOLA123");
     const search = req.params.search;
     User.find({$or:[{name: { "$regex": search, "$options": "i" }}, {about: { "$regex": search, "$options": "i" }}]})
         .populate('createdBy', '_id name')
