@@ -1,7 +1,7 @@
 # Logs
 logs
 *.log
-.env
+
 
 # Runtime data
 pids
@@ -23,6 +23,7 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
+.env
 # Dependency directory
 # https://docs.npmjs.com/cli/shrinkwrap#caveats
 node_modules
