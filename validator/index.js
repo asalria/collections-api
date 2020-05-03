@@ -6,11 +6,8 @@ exports.createBookValidator = (req, res, next) => {
         max: 150
     });
     // body
-    req.check('body', 'Write a body').notEmpty();
-    req.check('body', 'Body must be between 4 to 2000 characters').isLength({
-        min: 4,
-        max: 2000
-    });
+    req.check('isbn', 'Book already exists').isUnique();
+
     // check for errors
     const errors = req.validationErrors();
     // if error show the first one as they happen

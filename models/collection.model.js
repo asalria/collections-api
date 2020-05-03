@@ -8,26 +8,34 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
-    owner: {
-        type: String,
-        trim: true,
-        required: true
-    },
     createdBy: {
         type: ObjectId,
         ref: 'User'
+    },
+    privacy: {
+        type: String,
+        default: 'Public'
+    },
+    photo: {
+        type: String
     },
     created: {
         type: Date,
         default: Date.now
     },
     updated: Date,
+    tags: [{ type: String }],
     likes: [{ type: ObjectId, ref: 'User' }],
+    follows: [{ type: ObjectId, ref: 'User' }],
     about: {
         type: String,
         trim: true
     },
-    books: [{ type: ObjectId, ref: "Book" }]
+    books: [{ type: ObjectId, 
+            ref: "Book",
+            unique: true,
+            sparse: true
+         }]
 });
 
 /**

@@ -1,14 +1,20 @@
 const Book = require('../models/book.model');
+const mongoose = require('mongoose');
 const formidable = require('formidable');
+var cloud = require('../config/cloudinary.config');
+var isbn = require('node-isbn');
 const fs = require('fs');
 const _ = require('lodash');
+const ApiError = require('../models/api-error.model');
+
+
 
 exports.bookById = (req, res, next, id) => {
     Book.findById(id)
         .populate('createdBy', '_id name')
         .populate('comments.createdBy', '_id name')
         .populate('createdBy', '_id name role')
-        .select('_id title body created likes comments photo')
+        .select('_id title editorial isbn photo created likes comments language')
         .exec((err, book) => {
             if (err || !book) {
                 return res.status(400).json({
@@ -20,20 +26,43 @@ exports.bookById = (req, res, next, id) => {
         });
 };
 
-/*
-exports.getBooks = (req, res) => {
-    const books = Book.find()
-        .populate("createdBy", "_id name")
-        .populate("comments", "text created")
-        .populate("comments.createdBy", "_id name")
-        .select("_id title body created likes")
-        .sort({ created: -1 })
-        .then(books => {
+exports.findBooks = (req, res) => {
+    const search = req.params.search || '';
+    Book.find({$or:[{title: { "$regex": search, "$options": "i" }},{editorial: { "$regex": search, "$options": "i" }},{isbn: { "$regex": search, "$options": "i" }},{illustrator: { "$regex": search, "$options": "i" }}, {language: { "$regex": search, "$options": "i" }}]})
+        .populate('createdBy', '_id name')
+        .populate('comments.createdBy', '_id name')
+        .populate('createdBy', '_id name role')
+        .populate('books')
+        .exec((err, books) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
             res.json(books);
-        })
-        .catch(err => console.log(err));
-};
-*/
+            
+        });
+
+}
+
+exports.bookByISBN = (req, res) => {
+
+    const isbn = req.params.isbn || '';
+    Book.find({isbn: isbn})
+        .populate('createdBy', '_id name')
+        .populate('comments.createdBy', '_id name')
+        .populate('createdBy', '_id name role')
+        .exec((err, book) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+            res.json(book);
+            
+        });
+
+}
 
 // with pagination
 exports.getBooks = async (req, res) => {
@@ -48,7 +77,6 @@ exports.getBooks = async (req, res) => {
         // countDocuments() gives you total count of books
         .countDocuments()
         .then(count => {
-            console.log(count);
             totalItems = count;
             if( count > 0){
             return Book.find()
@@ -56,7 +84,7 @@ exports.getBooks = async (req, res) => {
                 .populate('comments', 'text created')
               .populate('comments.createdBy', '_id name')
                 .populate('createdBy', '_id name')
-                .select('_id title editorial created likes')
+                .select('_id title editorial created likes language photo isbn')
                 .limit(perPage)
                 .sort({ created: -1 });
             }
@@ -66,6 +94,31 @@ exports.getBooks = async (req, res) => {
         })
         .catch(err => console.log(err));
 };
+
+exports.getAllBooks = async (req, res) => {
+ 
+
+    let totalItems;
+
+    const books = await Book.find()
+        // countDocuments() gives you total count of books
+        .countDocuments()
+        .then(count => {
+            totalItems = count;
+            if( count > 0){
+            return Book.find()
+                .populate('comments', 'text created')
+                .populate('comments.createdBy', '_id name')
+                .populate('createdBy', '_id name')
+                .sort({ created: -1 });
+            }
+        })
+        .then(books => {
+            res.status(200).json(books);
+        })
+        .catch(err => console.log(err));
+};
+
 
 exports.createBook = (req, res, next) => {
     let form = new formidable.IncomingForm();
@@ -77,30 +130,75 @@ exports.createBook = (req, res, next) => {
             });
         }
         let book = new Book(fields);
-
+        var imagePath = "";
         req.profile.hashed_password = undefined;
         req.profile.salt = undefined;
         book.createdBy = req.profile;
+        if (files.photo === undefined) {
+            isbn.resolve(fields.isbn)
+            .then(results => {   
+                        console.log(results.imageLinks)
+                        if(results.imageLinks.smallThumbnail.length>0)
+                        {
+                            imagePath = results.imageLinks.thumbnail;
+                            book.photo = results.imageLinks.thumbnail;
+                            book.save()
+                            .then(()=> {
+                                res.status(200).json(book)
+                            })
+                            .catch(error => {
+                                if (error instanceof mongoose.Error.ValidationError) {
+                                    res.status(400).json({error : error.message, book: book});
+                                  } else {
+                                    next(new ApiError(error.message, 500));
+                                  }
+                            })
 
-        if (files.photo) {
-            book.photo.data = fs.readFileSync(files.photo.path);
-            book.photo.contentType = files.photo.type;
-        }
-        book.save((err, result) => {
-            if (err) {
-                return res.status(400).json({
-                    error: err
-                });
-            }
-            res.json(result);
+
+                    } else {
+                        book.photo = "https://cdn.pixabay.com/photo/2018/01/03/09/09/book-3057901_1280.png";
+                        book.save()
+                        .then(()=> {
+                            res.status(200).json(book)
+                        })
+                        .catch(error => {
+                            if (error instanceof mongoose.Error.ValidationError) {
+                                next(new ApiError(error.errors));
+                              } else {
+                                next(new ApiError(error.message, 500));
+                              }
+                        })
+                    }
+
+            })
+            .catch(err => console.log(err))
+        } else {
+            imagePath = files.photo.path;
+        
+        cloud.uploads(imagePath).then((result) => {
+            book.photo = result.url;
+            book.save()
+            .then(()=> {
+                res.status(200).json(book)
+            })
+            .catch(error => {
+                if (error instanceof mongoose.Error.ValidationError) {
+                    next(new ApiError(error.errors));
+                  } else {
+                    next(new ApiError(error.message, 500));
+                  }
+            })
+    
         });
+        }
+    
     });
 };
 
 exports.booksByUser = (req, res) => {
     Book.find({ createdBy: req.profile._id })
         .populate('createdBy', '_id name')
-        .select('_id title body created likes')
+        .select('_id title editorial created likes language photo isbn')
         .sort('_created')
         .exec((err, books) => {
             if (err) {
@@ -156,40 +254,55 @@ exports.updateBook = (req, res, next) => {
         let book = req.book;
         book = _.extend(book, fields);
         book.updated = Date.now();
-
+            
         if (files.photo) {
-            book.photo.data = fs.readFileSync(files.photo.path);
-            book.photo.contentType = files.photo.type;
+            // File upload
+            cloud.uploads(files.photo.path).then((result) => {
+                book.photo = result.url;
+                book.save()
+                .then(()=> {
+                    res.status(200).json(book)
+                })
+                .catch(error => {
+                    if (error instanceof mongoose.Error.ValidationError) {
+                        next(new ApiError(error.errors));
+                      } else {
+                        next(new ApiError(error.message, 500));
+                      }
+                })
+        
+            });
         }
 
-        book.save((err, result) => {
-            if (err) {
-                return res.status(400).json({
-                    error: err
-                });
-            }
-            res.json(book);
-        });
+        book.save()
+        .then(()=> {
+            res.status(200).json(book)
+        })
+        .catch(error => {
+            if (error instanceof mongoose.Error.ValidationError) {
+                next(new ApiError(error.errors));
+              } else {
+                next(new ApiError(error.message, 500));
+              }
+        })
     });
 };
 
 exports.deleteBook = (req, res) => {
     let book = req.book;
-    book.remove((err, book) => {
-        if (err) {
-            return res.status(400).json({
-                error: err
-            });
+    book.remove()
+    .then(message => {
+        if(message) { 
+            res.status(204).json(book)
+        } else {
+            next(new ApiError('Book not found',404));
         }
-        res.json({
-            message: 'Book deleted successfully'
-        });
-    });
+    })
 };
 
 exports.photo = (req, res, next) => {
-    res.set('Content-Type', req.book.photo.contentType);
-    return res.send(req.book.photo.data);
+ //   res.set('Content-Type', req.book.photo.contentType);
+    return res.send(req.book.photo);
 };
 
 exports.singleBook = (req, res) => {
@@ -353,3 +466,4 @@ exports.updateComment = async (req, res) => {
   res.json({ message: Language.fr.CommentUpdated });
 };
  */
+

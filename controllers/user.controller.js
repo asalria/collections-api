@@ -19,6 +19,27 @@ exports.userById = (req, res, next, id) => {
         });
 };
 
+exports.findUsers = (req, res) => {
+    console.log("HOLA");
+    const search = req.params.search;
+    User.find({$or:[{name: { "$regex": search, "$options": "i" }}, {about: { "$regex": search, "$options": "i" }}]})
+        .populate('createdBy', '_id name')
+        .populate('comments.createdBy', '_id name')
+        .populate('createdBy', '_id name role')
+        .populate('collections')
+        .exec((err, users) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+            console.log(users);
+            res.json(users);
+            
+        });
+
+}
+
 exports.hasAuthorization = (req, res, next) => {
     let sameUser = req.profile && req.auth && req.profile._id == req.auth._id;
     let adminUser = req.profile && req.auth && req.auth.role === 'admin';

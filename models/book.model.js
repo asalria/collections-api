@@ -15,7 +15,8 @@ const bookSchema = new mongoose.Schema({
     },
     isbn: {
         type: String,
-         unique: true
+         unique: true,
+         sparse: true
     },
     language: {
         type: String,
@@ -25,8 +26,7 @@ const bookSchema = new mongoose.Schema({
         type: String
     },
     photo: {
-        data: Buffer,
-        contenType: String
+        type: String
     },
     urls: [{ type: String }],
     createdBy: {
