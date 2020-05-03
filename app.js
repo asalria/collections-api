@@ -7,10 +7,10 @@ var cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 const fs = require('fs');
 const cors = require('cors');
-const dotenv = require('dotenv');
+//const dotenv = require('dotenv');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-dotenv.config();
+//dotenv.config();
 
 
 require('./config/db.config');
