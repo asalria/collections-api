@@ -58,8 +58,7 @@ app.use(session({
 }));
 
 app.use(helmet())
-app.use(cors())
-
+app.use(cors({origin: '*'}));
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
