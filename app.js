@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const expressValidator = require('express-validator');
 const fs = require('fs');
 const cors = require('cors');
@@ -22,7 +23,6 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/users.routes');
 const collectionRoutes = require('./routes/collection.routes');
 
-app.use(cors(corsConfig))
 // apiDocs
 app.get('/', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
@@ -57,7 +57,8 @@ app.use(session({
   })
 }));
 
-
+app.use(helmet())
+app.use(cors())
 
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
