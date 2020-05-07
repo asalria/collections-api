@@ -10,6 +10,7 @@ const cors = require('cors');
 //const dotenv = require('dotenv');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const corsConfig = require('./configs/cors.config');
 //dotenv.config();
 
 
@@ -35,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 // middleware -
-app.use(cors());
+app.use(cors(corsConfig))
 app.use(morgan('dev'));
 //app.use(bodyParser.json());
 app.use(cookieParser());
