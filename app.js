@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
 });
 
 // middleware -
+app.use(cors());
 app.use(morgan('dev'));
 //app.use(bodyParser.json());
 app.use(cookieParser());
@@ -53,7 +54,7 @@ app.use(session({
     ttl: 24 * 60 * 60
   })
 }));
-app.use(cors());
+
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
