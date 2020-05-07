@@ -22,6 +22,7 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/users.routes');
 const collectionRoutes = require('./routes/collection.routes');
 
+app.use(cors(corsConfig))
 // apiDocs
 app.get('/', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
@@ -36,7 +37,7 @@ app.get('/', (req, res) => {
 });
 
 // middleware -
-app.use(cors(corsConfig))
+
 app.use(morgan('dev'));
 //app.use(bodyParser.json());
 app.use(cookieParser());
@@ -55,6 +56,8 @@ app.use(session({
     ttl: 24 * 60 * 60
   })
 }));
+
+
 
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
