@@ -16,7 +16,7 @@ const corsConfig = require('./config/cors.config');
 
 
 require('./config/db.config');
-app.use(cors(corsConfig));
+
 // bring in routes
 const bookRoutes = require('./routes/books.routes');
 const authRoutes = require('./routes/auth.routes');
@@ -33,7 +33,7 @@ app.all('*', function(req, res, next) {
     next();
 }); */
 
-app.get('/', (req, res) => {
+/* app.get('/', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
         if (err) {
             res.status(400).json({
@@ -43,7 +43,8 @@ app.get('/', (req, res) => {
         const docs = JSON.parse(data);
         res.json(docs);
     });
-});
+}); */
+app.use(cors(corsConfig));
 
 // middleware -
 
