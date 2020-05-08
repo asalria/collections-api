@@ -58,7 +58,7 @@ app.use(session({
 }));
 
 app.use(helmet())
-app.use(cors({origin: 'https://ameliacollections-web.herokuapp.com/'}));
+app.use(cors({origin: 'https://ameliacollections-web.herokuapp.com/, http://localhost:5000/'}));
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
