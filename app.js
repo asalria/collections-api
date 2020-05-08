@@ -16,7 +16,7 @@ const corsConfig = require('./config/cors.config');
 
 
 require('./config/db.config');
-
+app.use(cors(corsConfig));
 // bring in routes
 const bookRoutes = require('./routes/books.routes');
 const authRoutes = require('./routes/auth.routes');
@@ -24,14 +24,14 @@ const userRoutes = require('./routes/users.routes');
 const collectionRoutes = require('./routes/collection.routes');
 
 // apiDocs
-
+/* 
 app.all('*', function(req, res, next) {
     var origin = req.get('origin'); 
     res.header('Access-Control-Allow-Origin', origin);
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
-});
+}); */
 
 app.get('/', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
