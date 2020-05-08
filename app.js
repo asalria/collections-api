@@ -25,12 +25,14 @@ const collectionRoutes = require('./routes/collection.routes');
 
 // apiDocs
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://ameliacollections-web.herokuapp.com");
-    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS,GET,DELETE,PUT');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+app.all('*', function(req, res, next) {
+    var origin = req.get('origin'); 
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
-  });
+});
+
 app.get('/', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
         if (err) {
