@@ -139,6 +139,7 @@ exports.resetPassword = (req, res) => {
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
 exports.socialLogin = async (req, res) => {
+    console.log(req.body)
     const idToken = req.body.tokenId;
     const ticket = await client.verifyIdToken({ idToken, audience: process.env.REACT_APP_GOOGLE_CLIENT_ID });
     // console.log('ticket', ticket);
