@@ -24,7 +24,7 @@ const userRoutes = require('./routes/users.routes');
 const collectionRoutes = require('./routes/collection.routes');
 
 // apiDocs
-app.use(cors({origin: 'https://ameliacollections-web.herokuapp.com'}));
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "https://ameliacollections-web.herokuapp.com");
     res.header('Access-Control-Allow-Methods', 'POST, OPTIONS,GET,DELETE,PUT');
