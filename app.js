@@ -24,6 +24,12 @@ const userRoutes = require('./routes/users.routes');
 const collectionRoutes = require('./routes/collection.routes');
 
 // apiDocs
+app.use(cors({origin: 'https://ameliacollections-web.herokuapp.com'}));
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 app.get('/', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
         if (err) {
@@ -58,7 +64,7 @@ app.use(session({
 }));
 
 app.use(helmet())
-app.use(cors({origin: 'https://ameliacollections-web.herokuapp.com'}));
+
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
