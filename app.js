@@ -74,6 +74,11 @@ app.all('*', function(req, res, next) {
     });
 }); */
 
+app.use('/api', bookRoutes);
+app.use('/api', authRoutes);
+app.use('/api', userRoutes);
+app.use('/api', collectionRoutes);
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     const error = new Error("Not Found");
