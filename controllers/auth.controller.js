@@ -193,7 +193,7 @@ module.exports.loginWithGoogle = (req, res, next) => {
           if (error) {
             next(new ApiError(error.message, 500));
           } else {
-            res.redirect(`${process.env.WEB_URL}/home`);
+            res.redirect(`${process.env.WEB_URL}`);
           }
         });
       }

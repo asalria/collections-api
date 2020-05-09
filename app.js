@@ -13,7 +13,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const corsConfig = require('./config/cors.config');
 //dotenv.config();
-
+app.use(cors(corsConfig));
 
 require('./config/db.config');
 
@@ -44,7 +44,7 @@ app.all('*', function(req, res, next) {
         res.json(docs);
     });
 }); */
-//app.use(cors(corsConfig));
+
 
 // middleware -
 
