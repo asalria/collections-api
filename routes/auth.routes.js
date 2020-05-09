@@ -1,9 +1,10 @@
 const express = require('express');
 const passport = require("passport");
+const sessionController = require("../controllers/session.controller");
 
 
 
-const { signup, signin, signout, forgotPassword, resetPassword, socialLogin } = require('../controllers/auth.controller');
+const { signup, signin, signout, forgotPassword, resetPassword, socialLogin, loginWithGoogle } = require('../controllers/auth.controller');
 
 // import password reset validator
 const { userSignupValidator, userSigninValidator, passwordResetValidator } = require('../validator');
@@ -21,7 +22,7 @@ router.put('/reset-password', passwordResetValidator, resetPassword);
 
 // then use this route for social login
 router.post('/social-login', socialLogin);
-router.get("/auth/google/callback", sessionController.loginWithGoogle);
+router.get("/auth/google/callback", loginWithGoogle);
 router.get(
     "/auth/google",
     passport.authenticate("google", {
