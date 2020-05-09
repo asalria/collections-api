@@ -1,56 +1,27 @@
-
-require("dotenv").config();
-
-const express = require("express");
+const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3001;
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+const expressValidator = require('express-validator');
+const fs = require('fs');
+const cors = require('cors');
+//const dotenv = require('dotenv');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const corsConfig = require('./config/cors.config');
+//dotenv.config();
+
+
+require('./config/db.config');
 
 // bring in routes
 const bookRoutes = require('./routes/books.routes');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/users.routes');
 const collectionRoutes = require('./routes/collection.routes');
-
-//Authentication
-const passport = require("passport");
-const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
-const mongoose = require("mongoose");
-
-//Configs
-
-const keys = require("./config/keys");
-require("./config/db.config");
-require("./config/passport.config").setup(passport);
-
-//Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(
-  session({
-    secret: keys.cookieSecret,
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      secure: false,
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 1000,
-    },
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection,
-      ttl: 24 * 60 * 60,
-    }),
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use((req, res, next) => {
-  res.locals.session = req.user;
-  next();
-});
-
-
 
 // apiDocs
 /* 
@@ -73,24 +44,44 @@ app.all('*', function(req, res, next) {
         res.json(docs);
     });
 }); */
+app.use(cors(corsConfig));
+
+// middleware -
+
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(expressValidator());
+app.use(session({
+  secret: 'Super Secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 1000
+  },
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 24 * 60 * 60
+  })
+}));
+
+app.use(helmet())
 
 app.use('/api', bookRoutes);
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api', collectionRoutes);
 
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-    const error = new Error("Not Found");
-    error.status = 404;
-    next(error);
-  });
-  
-  // error handler
-  app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({ message: error.message || "" });
-  });
-  
-app.listen(PORT, (req, res) => console.log(`App listening on port ${PORT}!`));
+app.use(function(err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).json({ error: 'Unauthorized!' });
+    }
+});
+
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+    console.log(`A Node Js API is listening on port: ${port}`);
+});
 
