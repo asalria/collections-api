@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const User = require('../models/user.model');
+const Collection = require('../models/collection.model');
 const formidable = require('formidable');
 const fs = require('fs');
 
@@ -218,7 +219,7 @@ exports.findCollections = (req, res) => {
     Collection.find({},
         { follows : 
             { $elemMatch : 
-               { _id : id, 
+               { _id : req.profile._id, 
                } 
             } 
         }
