@@ -11,6 +11,8 @@ const {
     singleCollection,
     like,
     unlike,
+    follow,
+    unfollow,
     comment,
     uncomment,
     updateComment,
@@ -33,6 +35,10 @@ router.delete('/collection/delete/:collectionId', requireSignin, isCreator, dele
 // like unlike
 router.put('/collection/like', requireSignin, like);
 router.put('/collection/unlike', requireSignin, unlike);
+
+// like unlike
+router.put('/collection/follow', requireSignin, follow);
+router.put('/collection/unfollow', requireSignin, unfollow);
 
 // comments
 router.put('/collection/comment', requireSignin, comment);

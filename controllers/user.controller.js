@@ -213,3 +213,28 @@ exports.findPeople = (req, res) => {
     }).select('name');
 };
 
+exports.findCollections = (req, res) => {
+
+    Collection.find({},
+        { follows : 
+            { $elemMatch : 
+               { _id : id, 
+               } 
+            } 
+        }
+        )
+        .populate('createdBy', '_id name')
+        .populate('comments.createdBy', '_id name')
+        .populate('createdBy', '_id name role')
+        .populate('books')
+        .exec((err, collections) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+            res.json(collections);
+            
+        });
+
+}

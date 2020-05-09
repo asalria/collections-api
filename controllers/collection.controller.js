@@ -144,7 +144,6 @@ exports.isCreator = (req, res, next) => {
 };
 
 exports.updateCollection = (req, res, next) => {
-    console.log("GASFSDFA")
     let form = new formidable.IncomingForm();
     
     form.keepExtensions = true;
@@ -250,6 +249,34 @@ exports.photo = (req, res, next) => {
 
 exports.like = (req, res) => {
     Collection.findByIdAndUpdate(req.body.collectionId, { $push: { likes: req.body.userId } }, { new: true }).exec(
+        (err, result) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.json(result);
+            }
+        }
+    );
+};
+
+exports.follow = (req, res) => {
+    Collection.findByIdAndUpdate(req.body.collectionId, { $push: { follows: req.body.userId } }, { new: true }).exec(
+        (err, result) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.json(result);
+            }
+        }
+    );
+};
+
+exports.unfollow = (req, res) => {
+    Collection.findByIdAndUpdate(req.body.collectionId, { $pull: { follows: req.body.userId } }, { new: true }).exec(
         (err, result) => {
             if (err) {
                 return res.status(400).json({
