@@ -215,14 +215,7 @@ exports.findPeople = (req, res) => {
 };
 
 exports.findCollections = (req, res) => {
-
-    Collection.find({},
-        { follows : 
-            { $elemMatch : 
-               { _id : req.profile._id, 
-               } 
-            } 
-        }
+    Collection.find({ follows : req.profile._id}
         )
         .populate('createdBy', '_id name')
         .populate('comments.createdBy', '_id name')

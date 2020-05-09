@@ -8,11 +8,11 @@ const helmet = require('helmet');
 const expressValidator = require('express-validator');
 const fs = require('fs');
 const cors = require('cors');
-//const dotenv = require('dotenv');
+const dotenv = require('dotenv');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const corsConfig = require('./config/cors.config');
-//dotenv.config();
+dotenv.config();
 app.use(cors(corsConfig));
 
 require('./config/db.config');

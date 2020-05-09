@@ -33,7 +33,7 @@ router.get("/user/photo/:userId", userPhoto);
 // who to follow
 router.get("/user/findpeople/:userId", requireSignin, findPeople);
 
-router.get("/user/findcollections/:userId", requireSignin, findCollections)
+router.get("/user/findcollections/:userId", findCollections)
 
 // any route containing :userId, our app will first execute userByID()
 router.param("userId", userById);
