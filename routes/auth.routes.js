@@ -1,4 +1,8 @@
 const express = require('express');
+const passport = require("passport");
+
+
+
 const { signup, signin, signout, forgotPassword, resetPassword, socialLogin } = require('../controllers/auth.controller');
 
 // import password reset validator
@@ -17,6 +21,12 @@ router.put('/reset-password', passwordResetValidator, resetPassword);
 
 // then use this route for social login
 router.post('/social-login', socialLogin);
+router.get(
+    "/auth/google",
+    passport.authenticate("google", {
+      scope: ["openid", "profile", "email"]
+    })
+  );
 
 // any route containing :userId, our app will first execute userByID()
 router.param('userId', userById);

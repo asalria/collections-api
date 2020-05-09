@@ -180,6 +180,24 @@ exports.socialLogin = async (req, res) => {
     }
 };
 
+module.exports.loginWithGoogle = (req, res, next) => {
+    passport.authenticate("google", (error, user) => {
+      if (error) {
+        next(error);
+      } else if (!user) {
+        next(new ApiError(message, 401));
+      } else {
+        req.login(user, error => {
+          if (error) {
+            next(new ApiError(error.message, 500));
+          } else {
+            res.redirect(`${process.env.WEB_URL}/home`);
+          }
+        });
+      }
+    })(req, res, next);
+  };
+
 // exports.socialLogin = (req, res) => {
 //     console.log('social login req.body', req.body);
 
