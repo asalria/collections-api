@@ -44,7 +44,7 @@ app.all('*', function(req, res, next) {
         res.json(docs);
     });
 }); */
-app.use(cors(corsConfig));
+//app.use(cors(corsConfig));
 
 // middleware -
 

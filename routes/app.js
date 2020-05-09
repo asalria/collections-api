@@ -6,10 +6,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // bring in routes
-const bookRoutes = require('./routes/books.routes');
-const authRoutes = require('./routes/auth.routes');
-const userRoutes = require('./routes/users.routes');
-const collectionRoutes = require('./routes/collection.routes');
+const bookRoutes = require('./books.routes');
+const authRoutes = require('./auth.routes');
+const userRoutes = require('./users.routes');
+const collectionRoutes = require('./collection.routes');
 
 //Authentication
 const passport = require("passport");
@@ -19,9 +19,9 @@ const mongoose = require("mongoose");
 
 //Configs
 
-const keys = require("./config/keys");
-require("./config/db.config");
-require("./config/passport.config").setup(passport);
+const keys = require("../config/keys");
+require("../config/db.config");
+require("../config/passport.config").setup(passport);
 
 //Middlewares
 app.use(express.json());
