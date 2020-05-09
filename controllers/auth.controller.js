@@ -183,8 +183,10 @@ exports.socialLogin = async (req, res) => {
 };
 
 module.exports.loginWithGoogle = (req, res, next) => {
+    console.log("Hola")
     passport.authenticate("google", (error, user) => {
       if (error) {
+        console.log(error)
         next(error);
       } else if (!user) {
         next(new ApiError(message, 401));
