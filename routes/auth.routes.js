@@ -21,6 +21,7 @@ router.put('/reset-password', passwordResetValidator, resetPassword);
 
 // then use this route for social login
 router.post('/social-login', socialLogin);
+router.get("/auth/google/callback", sessionController.loginWithGoogle);
 router.get(
     "/auth/google",
     passport.authenticate("google", {
