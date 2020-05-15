@@ -202,6 +202,7 @@ exports.addBook = (req, res) => {
     console.log('Hola');
     Collection.findByIdAndUpdate(req.body.collectionId, { $addToSet: { books: req.body.bookId } }, { new: true }).exec(
         (err, result) => {
+            console.log(result)
             if (err) {
                 return res.status(400).json({
                     error: err
