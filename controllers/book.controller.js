@@ -138,7 +138,7 @@ exports.createBook = (req, res, next) => {
             isbn.resolve(fields.isbn)
             .then(results => {   
                         console.log(results.imageLinks)
-                        if(results.imageLinks.smallThumbnail.length>0)
+                        if(results.imageLinks.smallThumbnail)
                         {
                             imagePath = results.imageLinks.thumbnail;
                             book.photo = results.imageLinks.thumbnail;
