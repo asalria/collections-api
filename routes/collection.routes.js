@@ -18,7 +18,8 @@ const {
     updateComment,
     addBook,
     removeBook,
-    findCollections
+    findCollections,
+    findCollectionsByName
 } = require('../controllers/collection.controller');
 
 const { requireSignin } = require('../controllers/auth.controller');
@@ -52,6 +53,7 @@ router.put('/collection/unbook', requireSignin, removeBook);
 // collections routes
 router.post('/collection/new/:userId', requireSignin, createCollection, createBookValidator);
 router.get('/collections/by/:userId', requireSignin, collectionsByUser);
+router.get('/collections/byName/:search', requireSignin, findCollectionsByName)
 
 router.get('/collection/:collectionId', singleCollection);
 

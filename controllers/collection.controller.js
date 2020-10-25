@@ -40,6 +40,24 @@ exports.findCollections = (req, res) => {
             res.json(collections);
             
         });
+}
+
+exports.findCollectionsByName = (req, res) => {
+    const search = req.params.search;
+    Collection.find({$and:[{name:  search}, {createdBy: req.profile._id}]})
+        .populate('createdBy', '_id name')
+        .populate('comments.createdBy', '_id name')
+        .populate('createdBy', '_id name role')
+        .populate('books')
+        .exec((err, collections) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+            res.json(collections);
+            
+        });
 
 }
 
