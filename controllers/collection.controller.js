@@ -45,7 +45,7 @@ exports.findCollections = (req, res) => {
 exports.findCollectionsByName = (req, res) => {
     const search = req.params.search;
     console.log(search)
-    Collection.find({$and:[{name:  search}, {createdBy: req.profile._id}]})
+    Collection.find({name:  search}, {createdBy: req.profile._id})
         .populate('createdBy', '_id name')
         .populate('comments.createdBy', '_id name')
         .populate('createdBy', '_id name role')
