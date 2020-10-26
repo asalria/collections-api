@@ -53,7 +53,7 @@ router.put('/collection/unbook', requireSignin, removeBook);
 // collections routes
 router.post('/collection/new/:userId', requireSignin, createCollection, createBookValidator);
 router.get('/collections/by/:userId', requireSignin, collectionsByUser);
-router.get('/collections/byName/:search', requireSignin, findCollectionsByName)
+router.get('/collections/byName/:search', findCollectionsByName)
 
 router.get('/collection/:collectionId', singleCollection);
 
