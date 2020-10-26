@@ -51,6 +51,7 @@ exports.findCollectionsByName = (req, res) => {
         .populate('createdBy', '_id name role')
         .populate('books')
         .exec((err, collections) => {
+            console.log(collections)
             if (err) {
                 return res.status(400).json({
                     error: err
