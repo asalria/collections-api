@@ -22,7 +22,6 @@
     "flash": "^1.1.0",
     "formidable": "^1.2.6",
     "google-auth-library": "^6.1.6",
-    "google-books-search-2": "^0.3.0",
     "helmet": "^3.22.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.0",
